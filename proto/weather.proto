@@ -1,10 +1,28 @@
 syntax = "proto3";
 package weather;
 
-message WeatherMessage {
+message Location {
+    string city = 1;
+    string country = 2;
+}
 
+message WeatherRequest {
+    Location location = 1;
+}
+
+message WeatherResponse {
+    string result = 1;
+    // string todaysTemperature = 2;
+    // string todaysUVIndex = 3;
 }
 
 service WeatherService {
-    
+    // Unary Service
+    rpc Weather(WeatherRequest) returns (WeatherResponse) {};
+
+    // Client Streaming
+
+    // Server Streaming
+
+    // BiDirectional Streaming
 }
