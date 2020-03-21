@@ -12,17 +12,17 @@ message WeatherRequest {
 
 message WeatherResponse {
     string result = 1;
-    // string todaysTemperature = 2;
-    // string todaysUVIndex = 3;
+    string todaysTemperature = 2;
+    string todaysUVIndex = 3;
 }
 
 service WeatherService {
     // Unary Service
-    rpc Weather(WeatherRequest) returns (WeatherResponse) {};
+    rpc CheckWeatherToday(WeatherRequest) returns (WeatherResponse) {};
 
-    // Client Streaming
+    // TODO: Client Streaming
 
-    // Server Streaming
+    // TODO: Server Streaming
 
-    // BiDirectional Streaming
+    // TODO: BiDirectional Streaming
 }
