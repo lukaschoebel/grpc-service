@@ -8,21 +8,16 @@ function main() {
         grpc.credentials.createInsecure()
     );
     
-    // Setup Location
-    var location = new weather.Location();
-    location.setCity('London');
-    location.setCountry('UK');
-    
     // Setup Request
     var request = new weather.WeatherRequest();
-    request.setLocation(location);
+    request.setCity('London').setCountry('UK');
 
     client.checkWeatherToday(request, (error, response) => {
         if (!error) {
             console.log('################## RESULT ##################');
             console.log(response.getResult());
             console.log(response.getTodaystemperature());
-            console.log(response.getTodaysuvindex());
+            console.log(response.getHumidity());
             console.log('############################################');
         } else {
             console.log(error);
