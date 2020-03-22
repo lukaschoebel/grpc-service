@@ -26,8 +26,27 @@ function checkWeatherToday(call, callback) {
 
 }
 
-function checkWeatherForecast() {
-    continue;
+function checkWeatherForecast(call, callback) {
+    var city = call.request.getRequest().getCity();
+    var forecastLength = call.request.getForecastlength();
+    
+    let count = 0, intervalID = setInterval(function() {        
+        var weatherForecastResponse = new weather.WeatherResponse();
+    
+        weatherForecastResponse.setResult(`It's always sunny in ${city}, ${count+1}/${forecastLength}`);
+        weatherForecastResponse.setTodaystemperature("Temperature: 25°C.");
+        weatherForecastResponse.setHumidity("Humidity: 110.");
+    
+        call.write(weatherForecastResponse);
+
+        if(++count > forecastLength-1) {
+            clearInterval(intervalID);
+            call.end(); // send all messages
+        }
+    
+    }, 1000)
+    
+
 }
 
 function main() {
