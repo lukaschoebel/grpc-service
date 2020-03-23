@@ -18,6 +18,10 @@ message WeatherResponse {
     string humidity = 3;
 }
 
+message TemperatureAverage {
+    string result = 1;
+}
+
 service WeatherService {
     // Unary Service
     rpc CheckWeatherToday (WeatherRequest) returns (WeatherResponse) {};
@@ -25,7 +29,9 @@ service WeatherService {
     // Server Streaming
     rpc CheckWeatherForecast (WeatherForecastRequest) returns (stream WeatherResponse) {};
 
-    // TODO: Client Streaming
+    // Client Streaming
+    rpc CheckWeatherAverage (stream WeatherRequest) returns (TemperatureAverage) {};
     
     // TODO: BiDirectional Streaming
+    // rpc BiDi (stream Request) returns (stream Response);
 }

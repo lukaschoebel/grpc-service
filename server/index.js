@@ -45,16 +45,37 @@ function checkWeatherForecast(call, callback) {
         }
     
     }, 1000)
-    
+}
 
+function checkWeatherAverage(call, callback) {
+    call
+        .on('data', request => {
+            var city = request.getCity();
+            // TODO: Check Weather in ALL CITIES
+            
+            // Executed when data is received @ server
+            console.log('Weather Call: ' + city);
+        })
+        .on('error', error => {
+            console.log(error);
+        })
+        .on('end', () =>{
+            var response = new weather.TemperatureAverage();
+            // TODO: Compute average and return as response
+
+            response.setResult('42°C');
+
+            callback(null, response);
+        });
 }
 
 function main() {
     var server = new grpc.Server();
-    server.addService(
-        service.WeatherServiceService, 
-        {checkWeatherToday: checkWeatherToday, checkWeatherForecast: checkWeatherForecast}
-    );
+    server.addService(service.WeatherServiceService, {
+        checkWeatherToday: checkWeatherToday, 
+        checkWeatherForecast: checkWeatherForecast,
+        checkWeatherAverage: checkWeatherAverage
+    });
 
     server.bind('127.0.0.1:50051', grpc.ServerCredentials.createInsecure());
     server.start();

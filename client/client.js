@@ -35,6 +35,33 @@ function callWeatherForecast(client, request) {
         });
 }
 
+function callWeatherAverage(client, requests) {
+
+    var call = client.checkWeatherAverage(new weather.WeatherRequest(), (err, res) => {
+        if (!err) {
+            console.log('Server Response: ', res.getResult());
+        } else {
+            console.error(error);
+        }
+    });
+
+    let count = 0, intervalID = setInterval(function () {
+        console.log('Sending msg: ' + count);
+
+        var request = new weather.WeatherRequest();
+        request.setCity('Berlin');
+
+        call.write(request);
+
+        if(++count > 3) {
+            clearInterval(intervalID);
+            call.end(); 
+        }
+        
+    }, 1000);
+    
+}
+
 function main() {
     var client = new service.WeatherServiceClient(
         'localhost:50051',
@@ -51,7 +78,9 @@ function main() {
     forecastRequest.setRequest(request);
     forecastRequest.setForecastlength(3);
 
-    callWeatherForecast(client, forecastRequest);
+    // callWeatherForecast(client, forecastRequest);
+
+    callWeatherAverage(client, request);
 
 }
 
