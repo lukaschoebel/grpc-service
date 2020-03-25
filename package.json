@@ -4,11 +4,16 @@
   "description": "Microservice example based on Node.js and the gRPC protocol.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon --exec babel-node ./server/index.js",
+    "client": "node ./client/client.js"
   },
   "author": "lukaschoebel",
   "license": "ISC",
   "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "esm": "^3.2.25",
     "google-protobuf": "^3.11.4",
     "grpc": "^1.24.2",
     "nodemon": "^2.0.2"

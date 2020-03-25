@@ -19,6 +19,12 @@ protoc -I=. ./proto/weather.proto \
 
 While the statical compilation is executed as above, the dynamic conversion requires some additional setup and a package that can be installed with `npm install @grpc/proto-loader`.
 
+## HowTo
+
+- Install Dependencies with `npm install`.
+- Start server by `npm run server`.
+- Start client by `npm run client`.
+
 ## Helpful Resources
 
 - [Official gRPC Node Documentation](https://grpc.io/docs/tutorials/basic/node/)

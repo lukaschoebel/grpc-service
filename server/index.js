@@ -1,12 +1,12 @@
 var grpc = require('grpc');
-var weather = require('../server/proto/weather_pb');
-var service = require('../server/proto/weather_grpc_pb');
+var weather = require('./proto/weather_pb');
+var service = require('./proto/weather_grpc_pb');
+import { sleep } from '../utils/utils.js';
 
 function convertF2C(fahrenheit) {
     return (( fahrenheit - 32 ) * 5 / 9).toFixed(2);
 }
 
-// Implementation of RPC Method
 function checkWeatherToday(call, callback) {
     var weatherResponse = new weather.WeatherResponse();
     
@@ -39,7 +39,7 @@ function checkWeatherForecast(call, callback) {
     
         call.write(weatherForecastResponse);
 
-        if(++count > forecastLength-1) {
+        if(++count > forecastLength - 1) {
             clearInterval(intervalID);
             call.end(); // send all messages
         }
@@ -69,12 +69,41 @@ function checkWeatherAverage(call, callback) {
         });
 }
 
+async function checkTemperature(call, callback) {
+    call
+        .on('data', response => {
+            var city = response.getCity();
+            console.log('city name is: ', city);
+        })
+        .on('error', error => {
+            console.log(error);
+        })
+        .on('end', () => {
+            console.log('<SERVER> The end.');            
+        });
+    
+    for (let i = 0; i < 4; i++) {
+        var request = new weather.Temperature()
+        // TODO: Integrate Logic to actually convert temperature scales
+        request.setTempc('20°C');
+        request.setTempf('68 F');
+        request.setTempk('293.15 K');
+
+        call.write(request);
+
+        await sleep(1000);
+    }
+
+    call.end() // end server side streaming
+}
+
 function main() {
     var server = new grpc.Server();
     server.addService(service.WeatherServiceService, {
         checkWeatherToday: checkWeatherToday, 
         checkWeatherForecast: checkWeatherForecast,
-        checkWeatherAverage: checkWeatherAverage
+        checkWeatherAverage: checkWeatherAverage,
+        checkTemperature: checkTemperature
     });
 
     server.bind('127.0.0.1:50051', grpc.ServerCredentials.createInsecure());
