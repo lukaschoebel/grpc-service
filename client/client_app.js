@@ -1,11 +1,16 @@
 var grpc = require('grpc');
 var weather = require('../server/proto/weather_pb');
 var service = require('../server/proto/weather_grpc_pb');
-import { sleep } from '../utils/utils.js';
+import { sleep, getRPCDeadline } from '../utils/utils.js';
 
-// UNARY
+var client = new service.WeatherServiceClient(
+    'localhost:50051',
+    grpc.credentials.createInsecure()
+);
+
+// UNARY Client Service
 function callWeatherToday(client, request) {
-    client.checkWeatherToday(request, (error, response) => {
+    client.checkWeatherToday(request, {deadline: getRPCDeadline()}, (error, response) => {
         if (!error) {
             console.log('################## RESULT ##################');
             console.log(response.getResult());
@@ -13,11 +18,12 @@ function callWeatherToday(client, request) {
             console.log(response.getHumidity());
             console.log('############################################');
         } else {
-            console.log(error);
+            console.log(error.message);
         }
     });
 }
 
+// Server Streaming Service
 function callWeatherForecast(client, request) {
 
     var stream = client.checkWeatherForecast(request, () => {});
@@ -37,6 +43,7 @@ function callWeatherForecast(client, request) {
         });
 }
 
+// Client Streaming Service
 function callWeatherAverage(client, requests) {
 
     var call = client.checkWeatherAverage(new weather.WeatherRequest(), (err, res) => {
@@ -63,6 +70,7 @@ function callWeatherAverage(client, requests) {
     }, 1000);    
 }
 
+// BiDirectional Streaming
 async function callTemperature(client) {
     
     var call = client.checkTemperature(request, (error, response) => {
@@ -92,21 +100,17 @@ async function callTemperature(client) {
 }
 
 function main() {
-    var client = new service.WeatherServiceClient(
-        'localhost:50051',
-        grpc.credentials.createInsecure()
-    );
     
     // Setup Request
     var request = new weather.WeatherRequest();
     request.setCity('London').setCountry('UK');
 
     // Unary RPC
-    // callWeatherToday(client, request);
+    callWeatherToday(client, request);
 
-    var forecastRequest = new weather.WeatherForecastRequest();
-    forecastRequest.setRequest(request);
-    forecastRequest.setForecastlength(3);
+    // var forecastRequest = new weather.WeatherForecastRequest();
+    // forecastRequest.setRequest(request);
+    // forecastRequest.setForecastlength(3);
 
     // Server Streaming RPC
     // callWeatherForecast(client, forecastRequest);
@@ -115,7 +119,7 @@ function main() {
     // callWeatherAverage(client, request);
 
     // BiDirectional Streaming RPC
-    callTemperature(client);
+    // callTemperature(client);
 }
 
 main();

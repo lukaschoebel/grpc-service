@@ -1,28 +1,42 @@
 var grpc = require('grpc');
 var weather = require('./proto/weather_pb');
 var service = require('./proto/weather_grpc_pb');
-import { sleep } from '../utils/utils.js';
+import { sleep, isString } from '../utils/utils.js';
 
 function convertF2C(fahrenheit) {
     return (( fahrenheit - 32 ) * 5 / 9).toFixed(2);
 }
 
 function checkWeatherToday(call, callback) {
-    var weatherResponse = new weather.WeatherResponse();
     
-    weatherResponse.setResult(
-        `It's always sunny in ${call.request.getCity()}, ${call.request.getCountry()}`
-    );
+    var city = call.request.getCity();
+    
+    // TODO: Check if Weather API yields a result for the specified *city*
+    // FIXME: isString not sufficient since req.getCity() will always yield string result
+    if (isString(city)) {
+        var weatherResponse = new weather.WeatherResponse();
+        
+        weatherResponse.setResult(
+            `It's always sunny in ${city}, ${call.request.getCountry()}`
+        );
+    
+        weatherResponse.setTodaystemperature(
+            "Temperature: 25°C."
+        );
+    
+        weatherResponse.setHumidity(
+            "Humidity: 110."
+        );
 
-    weatherResponse.setTodaystemperature(
-        "Temperature: 25°C."
-    );
+        callback(null, weatherResponse);
+    } else {
+        // Error Handling
+        return callback({
+            code: grpc.status.INVALID_ARGUMENT,
+            message: city + ' does not seem to be a valid city. Please ensure correct spelling and data format.'
+        });
+    }
 
-    weatherResponse.setHumidity(
-        "Humidity: 110."
-    );
-
-    callback(null, weatherResponse);
 
 }
 
