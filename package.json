@@ -6,16 +6,20 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "nodemon --exec babel-node ./server/index.js",
-    "client": "node ./client/client.js"
+    "client": "node ./client/client.js",
+    "gen:certs": "sh ./scripts/gen_certs.sh",
+    "proto": "sh ./scripts/run_proto.sh"
   },
   "author": "lukaschoebel",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "esm": "^3.2.25",
+    "fs": "0.0.1-security",
     "google-protobuf": "^3.11.4",
     "grpc": "^1.24.2",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "openssl": "^1.1.0"
   }
 }

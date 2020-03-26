@@ -1,11 +1,19 @@
+const fs = require('fs');
 var grpc = require('grpc');
 var weather = require('../server/proto/weather_pb');
 var service = require('../server/proto/weather_grpc_pb');
 import { sleep, getRPCDeadline } from '../utils/utils.js';
 
+
+let credentials = grpc.credentials.createSsl(
+    fs.readFileSync('./certs/ca.crt'),
+    fs.readFileSync('./certs/client.key'),
+    fs.readFileSync('./certs/client.crt')
+)
+
 var client = new service.WeatherServiceClient(
     'localhost:50051',
-    grpc.credentials.createInsecure()
+    credentials
 );
 
 // UNARY Client Service

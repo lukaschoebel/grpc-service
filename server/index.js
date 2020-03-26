@@ -1,3 +1,4 @@
+const fs = require('fs');
 var grpc = require('grpc');
 var weather = require('./proto/weather_pb');
 var service = require('./proto/weather_grpc_pb');
@@ -10,7 +11,7 @@ function convertF2C(fahrenheit) {
 function checkWeatherToday(call, callback) {
     
     var city = call.request.getCity();
-    
+
     // TODO: Check if Weather API yields a result for the specified *city*
     // FIXME: isString not sufficient since req.getCity() will always yield string result
     if (isString(city)) {
@@ -112,6 +113,14 @@ async function checkTemperature(call, callback) {
 }
 
 function main() {
+
+    let credentials = grpc.ServerCredentials.createSsl(
+        fs.readFileSync('./certs/ca.crt'), [{
+            cert_chain: fs.readFileSync('./certs/server.crt'),
+            private_key: fs.readFileSync('./certs/server.key')
+        }], true
+    )
+
     var server = new grpc.Server();
     server.addService(service.WeatherServiceService, {
         checkWeatherToday: checkWeatherToday, 
@@ -120,9 +129,9 @@ function main() {
         checkTemperature: checkTemperature
     });
 
-    server.bind('127.0.0.1:50051', grpc.ServerCredentials.createInsecure());
+    server.bind('127.0.0.1:50051', credentials);
     server.start();
-    console.log('Server running on port 127.0.0.1:50051');
+    console.log('Server running on port 127.0.0.1:50051', credentials);
 
 }
 

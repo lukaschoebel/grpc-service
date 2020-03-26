@@ -22,11 +22,14 @@ While the statical compilation is executed as above, the dynamic conversion requ
 ## HowTo
 
 - Install Dependencies with `npm install`.
+- Compile Proto file by `npm run proto`.
+- Generate SSL Certificates for encrypted communication by `npm run gen:certs`.
 - Start server by `npm run server`.
 - Start client by `npm run client`.
 
-## Helpful Resources
+## Helpful Resources & Acknowledgements
 
 - [Official gRPC Node Documentation](https://grpc.io/docs/tutorials/basic/node/)
+- *Gonzalo Bahamodez* and his [gRPC SSL Demo](https://github.com/gbahamondezc/node-grpc-ssl)
 - [Official gRPC Java Documentation](https://grpc.io/docs/tutorials/basic/java/)
 - [Official Protobuf Documentation](https://developers.google.com/protocol-buffers)
