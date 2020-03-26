@@ -26,7 +26,7 @@ function callWeatherToday(client, request) {
             console.log(response.getHumidity());
             console.log('############################################');
         } else {
-            console.log(error.message);
+            console.log(error.code + ": " + error.message);
         }
     });
 }
@@ -34,7 +34,13 @@ function callWeatherToday(client, request) {
 // Server Streaming Service
 function callWeatherForecast(client, request) {
 
-    var stream = client.checkWeatherForecast(request, () => {});
+    var stream = client.checkWeatherForecast(request, () => (error, _) => {
+        if (!error) {
+            console.log("Stream setup sucessfully.");
+        } else {
+            console.log(error.code + ": " + error.message);
+        }
+    });
     
     stream
         .on('data', (response) => {
@@ -58,7 +64,7 @@ function callWeatherAverage(client, requests) {
         if (!err) {
             console.log('Server Response: ', res.getResult());
         } else {
-            console.error(error);
+            console.log(error.code + ": " + error.message);
         }
     });
 
@@ -82,7 +88,7 @@ function callWeatherAverage(client, requests) {
 async function callTemperature(client) {
     
     var call = client.checkTemperature(request, (error, response) => {
-        console.log('Server response: ', response);
+        !error ? console.log('Server response: ', response): console.log(error.code + ": " + error.message);
     });
 
     call
