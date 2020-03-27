@@ -10,23 +10,22 @@ function convertF2C(fahrenheit) {
     return (( fahrenheit - 32 ) * 5 / 9).toFixed(2);
 }
 
-function getWeatherFor(city) {
+async function getWeatherFor(city) {
     let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`;
-    let weatherJSON = new JSON();
 
-    request(url, function (err, response, body) {
-        if(!err){
+
+    await request(url, (err, response, body) => {
+        if(err || response.statusCode !== 200) {
+            console.log('Weather request failed!\n', error);
+            return undefined;
+        } else {
             weather = JSON.parse(body);
             console.log(weather.main);
-            return weather.main;
-        } else {
-            console.log('error:', error);
-            return null;
+            return weather;
         }
     });
 
-    return null;
-
+    return weather;
 }
 
 function checkWeatherToday(call, callback) {
@@ -48,7 +47,7 @@ function checkWeatherToday(call, callback) {
         );
     
         weatherResponse.setTodaystemperature(
-            `Temperature: ${weather.temp} °C.`
+            `Temperature: 25 °C.`
         );
     
         weatherResponse.setHumidity(
