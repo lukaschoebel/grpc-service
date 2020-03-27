@@ -1,11 +1,32 @@
 const fs = require('fs');
 var grpc = require('grpc');
+const request = require('request');
 var weather = require('./proto/weather_pb');
 var service = require('./proto/weather_grpc_pb');
+import { API_KEY } from '../secrets/secrets.js';
 import { sleep, isString } from '../utils/utils.js';
 
 function convertF2C(fahrenheit) {
     return (( fahrenheit - 32 ) * 5 / 9).toFixed(2);
+}
+
+function getWeatherFor(city) {
+    let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`;
+    let weatherJSON = new JSON();
+
+    request(url, function (err, response, body) {
+        if(!err){
+            weather = JSON.parse(body);
+            console.log(weather.main);
+            return weather.main;
+        } else {
+            console.log('error:', error);
+            return null;
+        }
+    });
+
+    return null;
+
 }
 
 function checkWeatherToday(call, callback) {
@@ -15,6 +36,11 @@ function checkWeatherToday(call, callback) {
     // TODO: Check if Weather API yields a result for the specified *city*
     // FIXME: isString not sufficient since req.getCity() will always yield string result
     if (isString(city)) {
+        console.log("city > " + city);
+        
+        var currentWeather = getWeatherFor(city);
+        console.log("-->" + currentWeather);
+        
         var weatherResponse = new weather.WeatherResponse();
         
         weatherResponse.setResult(
@@ -22,7 +48,7 @@ function checkWeatherToday(call, callback) {
         );
     
         weatherResponse.setTodaystemperature(
-            "Temperature: 25°C."
+            `Temperature: ${weather.temp} °C.`
         );
     
         weatherResponse.setHumidity(

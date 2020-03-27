@@ -1,5 +1,4 @@
 const fs = require('fs');
-const request = require('request');
 var grpc = require('grpc');
 var weather = require('../server/proto/weather_pb');
 var service = require('../server/proto/weather_grpc_pb');
@@ -16,8 +15,6 @@ var client = new service.WeatherServiceClient(
     'localhost:50051',
     credentials
 );
-
-
 
 // UNARY Client Service
 function callWeatherToday(client, request) {
@@ -120,7 +117,7 @@ function main() {
     
     // Setup Request
     var request = new weather.WeatherRequest();
-    request.setCity('London').setCountry('UK');
+    request.setCity('London').setCountry('GB');
 
     // Unary RPC
     callWeatherToday(client, request);
