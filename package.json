@@ -12,6 +12,10 @@
   },
   "author": "lukaschoebel",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lukaschoebel/grpc-service/issues"
+  },
+  "homepage": "https://github.com/lukaschoebel/grpc-service",
   "dependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
@@ -20,6 +24,7 @@
     "google-protobuf": "^3.11.4",
     "grpc": "^1.24.2",
     "nodemon": "^2.0.2",
-    "openssl": "^1.1.0"
+    "openssl": "^1.1.0",
+    "request": "^2.88.2"
   }
 }
