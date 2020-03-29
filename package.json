@@ -17,15 +17,16 @@
   },
   "homepage": "https://github.com/lukaschoebel/grpc-service",
   "dependencies": {
+    "axios": "^0.19.2",
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "esm": "^3.2.25",
     "fs": "0.0.1-security",
     "google-protobuf": "^3.11.4",
     "grpc": "^1.24.2",
+    "node-fetch": "^2.6.0",
     "nodemon": "^2.0.2",
     "openssl": "^1.1.0",
-    "request": "^2.88.2",
     "yargs": "^15.3.1"
   }
 }

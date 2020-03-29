@@ -1,69 +1,59 @@
 const fs = require('fs');
 var grpc = require('grpc');
-const request = require('request');
 var weather = require('./proto/weather_pb');
 var service = require('./proto/weather_grpc_pb');
 import { API_KEY } from '../secrets/secrets.js';
 import { sleep, isString } from '../utils/utils.js';
+const axios = require("axios");
 
 function convertF2C(fahrenheit) {
     return (( fahrenheit - 32 ) * 5 / 9).toFixed(2);
 }
 
-async function getWeatherFor(city) {
+function getWeatherFor(city) {
     let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`;
+    let data;
 
-
-    await request(url, (err, response, body) => {
-        if(err || response.statusCode !== 200) {
-            console.log('Weather request failed!\n', error);
-            return undefined;
-        } else {
-            weather = JSON.parse(body);
-            console.log(weather.main);
-            return weather;
-        }
-    });
-
-    return weather;
+    return axios.get(url)
+        .then(response => {
+            // console.log(response.data.main);
+            console.log(response.data);
+            return response.data;
+        })
+        .catch(error => console.log('Error', error));
 }
 
 function checkWeatherToday(call, callback) {
     
     var city = call.request.getCity();
 
-    // TODO: Check if Weather API yields a result for the specified *city*
-    // FIXME: isString not sufficient since req.getCity() will always yield string result
-    if (isString(city)) {
-        console.log("city > " + city);
-        
-        var currentWeather = getWeatherFor(city);
-        console.log("-->" + currentWeather);
-        
-        var weatherResponse = new weather.WeatherResponse();
-        
-        weatherResponse.setResult(
-            `It's always sunny in ${city}, ${call.request.getCountry()}`
-        );
-    
-        weatherResponse.setTodaystemperature(
-            `Temperature: 25 °C.`
-        );
-    
-        weatherResponse.setHumidity(
-            "Humidity: 110."
-        );
+    getWeatherFor(city)
+        .then(data => {
+            console.log("~-> " + data.main.temp);
 
-        callback(null, weatherResponse);
-    } else {
-        // Error Handling
-        return callback({
-            code: grpc.status.INVALID_ARGUMENT,
-            message: city + ' does not seem to be a valid city. Please ensure correct spelling and data format.'
+            var weatherResponse = new weather.WeatherResponse();
+            
+            weatherResponse.setResult(
+                `${data.weather[0]} in ${city}, ${call.request.getCountry()}`
+            );
+        
+            weatherResponse.setTodaystemperature(
+                `Temperature: ${data.main.temp} °C.`
+            );
+        
+            weatherResponse.setHumidity(
+                `Humidity: ${data.main.humidity}.`
+            );
+
+            callback(null, weatherResponse);
+        })
+        .catch(error => {
+            console.log(error)
+            return callback({
+                code: grpc.status.INVALID_ARGUMENT,
+                message: city + ' does not seem to be a valid city. Please ensure correct spelling and data format.'
+            });
         });
-    }
-
-
 }
 
 function checkWeatherForecast(call, callback) {
