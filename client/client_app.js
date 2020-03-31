@@ -22,8 +22,8 @@ function callWeatherToday(client, request) {
         if (!error) {
             console.log('################## RESULT ##################');
             console.log(response.getResult());
-            console.log(response.getTodaystemperature());
-            console.log(response.getHumidity());
+            console.log("Temperature: " + response.getTodaystemperature() + "°C");
+            console.log("Humidity: " + response.getHumidity());
             console.log('############################################');
         } else {
             console.log(error.code + ": " + error.message);

@@ -7,12 +7,15 @@ import { sleep, isString } from '../utils/utils.js';
 const axios = require("axios");
 
 function convertF2C(fahrenheit) {
-    return (( fahrenheit - 32 ) * 5 / 9).toFixed(2);
+    return ((( fahrenheit - 32 ) * 5 / 9).toFixed(2)).toString();
+}
+
+function convertF2K(fahrenheit) {
+    return null;
 }
 
 function getWeatherFor(city) {
-    let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`;
-    let data;
+    let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${API_KEY}`;
 
     return axios.get(url)
         .then(response => {
@@ -29,21 +32,19 @@ function checkWeatherToday(call, callback) {
 
     getWeatherFor(city)
         .then(data => {
-            console.log("~-> " + data.main.temp);
+            console.log("~-> " + data.weather[0].description);
 
             var weatherResponse = new weather.WeatherResponse();
             
             weatherResponse.setResult(
-                `${data.weather[0]} in ${city}, ${call.request.getCountry()}`
+                `${data.weather[0].description} in ${city}, ${call.request.getCountry()}`
             );
         
-            weatherResponse.setTodaystemperature(
-                `Temperature: ${data.main.temp} °C.`
-            );
+            // Setting Temperature
+            weatherResponse.setTodaystemperature(convertF2C(data.main.temp));
         
-            weatherResponse.setHumidity(
-                `Humidity: ${data.main.humidity}.`
-            );
+            // Setting Humidity
+            weatherResponse.setHumidity(data.main.humidity.toString());
 
             callback(null, weatherResponse);
         })
