@@ -1,5 +1,4 @@
 node_modules/*
 server/proto/*
-utils/replacement.txt
 certs/*.key
 secrets/secrets.js

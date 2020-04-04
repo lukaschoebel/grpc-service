@@ -14,6 +14,10 @@ function convertF2K(fahrenheit) {
     return null;
 }
 
+String.prototype.capitalize = function() {
+    return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+};
+
 function getWeatherFor(city) {
     let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${API_KEY}`;
 
@@ -36,8 +40,9 @@ function checkWeatherToday(call, callback) {
 
             var weatherResponse = new weather.WeatherResponse();
             
+            // Setting Result
             weatherResponse.setResult(
-                `${data.weather[0].description} in ${city}, ${call.request.getCountry()}`
+                `${data.weather[0].description.capitalize()} today in ${city}, ${call.request.getCountry().checkWeatherToday}`
             );
         
             // Setting Temperature

@@ -1,3 +1,4 @@
+// const args = process.argv;
 const fs = require('fs');
 var grpc = require('grpc');
 var weather = require('../server/proto/weather_pb');
@@ -23,7 +24,7 @@ function callWeatherToday(client, request) {
             console.log('################## RESULT ##################');
             console.log(response.getResult());
             console.log("Temperature: " + response.getTodaystemperature() + "°C");
-            console.log("Humidity: " + response.getHumidity());
+            console.log("Humidity: " + response.getHumidity() + "%");
             console.log('############################################');
         } else {
             console.log(error.code + ": " + error.message);
@@ -114,26 +115,42 @@ async function callTemperature(client) {
 }
 
 function main() {
-    
+
+    var args = process.argv.slice(2);
+    console.log(args);
+
     // Setup Request
     var request = new weather.WeatherRequest();
-    request.setCity('London').setCountry('GB');
+    request.setCity('London').setCountry('UK');
 
-    // Unary RPC
-    callWeatherToday(client, request);
+    var forecastRequest = new weather.WeatherForecastRequest();
+    forecastRequest.setRequest(request);
+    forecastRequest.setForecastlength(3);
+    
+    // Setup default case 
+    if (!args.length) {
+        args = ['callWeatherToday', 'London']
+    }
+    
+    console.log(args[0]);
+    switch (args[0]) {
+        case 'callWeatherToday':    // Unary RPC
+            callWeatherToday(client, request);
+            break;
+        case 'callWeatherForecast': // Server Streaming RPC
+            callWeatherForecast(client, forecastRequest);
+            break;
+        case 'callWeatherAverage':  // Client Streaming RPC
+            callWeatherAverage(client, request);
+            break;
+        case 'callTemperature':     // BiDirectional Streaming RPC
+            callTemperature(client);
+            break;
+        default:
+            console.log('Error!');
+            break;
+    }
 
-    // var forecastRequest = new weather.WeatherForecastRequest();
-    // forecastRequest.setRequest(request);
-    // forecastRequest.setForecastlength(3);
-
-    // Server Streaming RPC
-    // callWeatherForecast(client, forecastRequest);
-
-    // Client Streaming RPC
-    // callWeatherAverage(client, request);
-
-    // BiDirectional Streaming RPC
-    // callTemperature(client);
 }
 
 main();
