@@ -28,3 +28,21 @@ export function isString(x) {
 export function getRPCDeadline(timeOut=5000) {
     return new Date(Date.now() + timeOut);
 }
+
+/**
+ * Converts temperature in Fahrenheit to Celcius
+ * @param {string} fahrenheit Specifies temperature in Fahrenheit
+ * @return {string} returns converted temperature in Celcius
+ */
+export function convertF2C(fahrenheit) {
+    return ((( fahrenheit - 32 ) * ( 5 / 9 )).toFixed(2)).toString();
+}
+
+/**
+ * Converts temperature in Fahrenheit to Kelvin
+ * @param {string} fahrenheit Specifies temperature in Fahrenheit
+ * @return {string} returns converted temperature in Kelvin
+ */
+export function convertF2K(fahrenheit) {
+    return ((( fahrenheit + 459.67 ) * ( 5 / 9 )).toFixed(2)).toString();
+}

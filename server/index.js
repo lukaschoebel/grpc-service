@@ -3,17 +3,17 @@ var grpc = require('grpc');
 var weather = require('./proto/weather_pb');
 var service = require('./proto/weather_grpc_pb');
 import { API_KEY } from '../secrets/secrets.js';
-import { sleep, isString } from '../utils/utils.js';
+import { sleep, 
+        isString, 
+        convertF2C, 
+        convertF2K } from '../utils/utils.js';
 const axios = require("axios");
 
-function convertF2C(fahrenheit) {
-    return ((( fahrenheit - 32 ) * 5 / 9).toFixed(2)).toString();
-}
 
-function convertF2K(fahrenheit) {
-    return null;
-}
-
+/**
+ * Capitalizes the first letters in each word of a given string
+ * @return {string} returns capitalized string
+ */
 String.prototype.capitalize = function() {
     return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
 };
@@ -36,7 +36,7 @@ function checkWeatherToday(call, callback) {
 
     getWeatherFor(city)
         .then(data => {
-            console.log("~-> " + data.weather[0].description);
+            // console.log("~-> " + data.weather[0].description);
 
             var weatherResponse = new weather.WeatherResponse();
             

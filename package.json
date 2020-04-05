@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "nodemon --exec babel-node ./server/index.js",
+    "develop": "SERVER_PORT=50051 node server",
     "client": "node ./client/client.js",
     "gen:certs": "sh ./scripts/gen_certs.sh",
     "proto": "sh ./scripts/run_proto.sh"

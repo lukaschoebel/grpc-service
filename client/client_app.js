@@ -17,7 +17,11 @@ var client = new service.WeatherServiceClient(
     credentials
 );
 
-// UNARY Client Service
+/**
+ * Unary API call to server
+ * @param {WeatherServiceClient} client Defines the connection to the WeatherServiceClient
+ * @param {WeatherRequest} request Defines the location of interest
+ */
 function callWeatherToday(client, request) {
     client.checkWeatherToday(request, {deadline: getRPCDeadline()}, (error, response) => {
         if (!error) {
@@ -32,7 +36,11 @@ function callWeatherToday(client, request) {
     });
 }
 
-// Server Streaming Service
+/**
+ * Server Streaming Service
+ * @param {WeatherServiceClient} client Defines the connection to the WeatherServiceClient
+ * @param {WeatherRequest} request Defines the location of interest
+ */
 function callWeatherForecast(client, request) {
 
     var stream = client.checkWeatherForecast(request, () => (error, _) => {
@@ -58,7 +66,11 @@ function callWeatherForecast(client, request) {
         });
 }
 
-// Client Streaming Service
+/**
+ * Client Streaming Service
+ * @param {WeatherServiceClient} client Defines the connection to the WeatherServiceClient
+ * @param {WeatherRequest} request Defines the location of interest
+ */
 function callWeatherAverage(client, requests) {
 
     var call = client.checkWeatherAverage(new weather.WeatherRequest(), (err, res) => {
@@ -85,7 +97,11 @@ function callWeatherAverage(client, requests) {
     }, 1000);    
 }
 
-// BiDirectional Streaming
+/**
+ * BiDirectional Streaming
+ * @param {WeatherServiceClient} client Defines the connection to the WeatherServiceClient
+ * @param {WeatherRequest} request Defines the location of interest
+ */
 async function callTemperature(client) {
     
     var call = client.checkTemperature(request, (error, response) => {
@@ -114,25 +130,25 @@ async function callTemperature(client) {
     call.end(); // end client side streaming
 }
 
+
 function main() {
-
+    // Command Line Arguments
     var args = process.argv.slice(2);
-    console.log(args);
-
-    // Setup Request
-    var request = new weather.WeatherRequest();
-    request.setCity('London').setCountry('UK');
 
     var forecastRequest = new weather.WeatherForecastRequest();
     forecastRequest.setRequest(request);
     forecastRequest.setForecastlength(3);
     
-    // Setup default case 
+    // Set default case: London with unary API call
     if (!args.length) {
         args = ['callWeatherToday', 'London']
     }
+
+    // Setup Request
+    var request = new weather.WeatherRequest();
+    request.setCity(args[1]).setCountry('UK');
     
-    console.log(args[0]);
+    console.log(args[0]); // Specify API type
     switch (args[0]) {
         case 'callWeatherToday':    // Unary RPC
             callWeatherToday(client, request);
